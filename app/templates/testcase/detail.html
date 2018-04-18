@@ -1,0 +1,262 @@
+{% extends "base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block scripts %}
+<script type="text/javascript" src="/static/socket.io-1.3.7.js"></script>
+<script type="text/javascript" src="/static/js/dmuploader.min.js"></script>
+<script type="text/javascript" src="/static/js/demo.js"></script>
+<script type="text/javascript" src="/static/js/screen.js"></script>
+<link rel="stylesheet" href="../static/demo.css" rel="stylesheet" />
+<link rel="stylesheet" href="../static/css/stf.css" rel="stylesheet" /> {% endblock %} {% block tittle %}Login{% endblock %} {% block page_content%}
+<div class="page_header">
+    <h2 id='h2'></h2>
+    <div class="col-md-4" style="padding:0;width:960px">
+         <!-- <div class="col-md-4" style="padding:0;">  -->
+        <!-- width:320px" -->
+        <div class="panel panel-primary" style="background:black;border:0">
+            <div class="panel-heading" style="background:black;border:0">小米61
+                <div style="float:right;">
+                    <a id="modex" role="button" title="刷新" onclick="restart()">高清2</a>
+                </div>
+            </div>
+            <div class="panel-body" style="height:600px;padding:0">
+            <!-- height:560px -->
+                <device-screen id='hahaha'>
+                    <div class="positioner" style="transform: rotate(0deg);">
+                        <canvas id="canvas" class="screen" "></canvas>
+                    <!-- style="border: 1px solid red; -->
+                            <canvas width="1" height="1" class="hacky-stretcher"></canvas>
+                    </div>
+                    <input type="password" tabindex="40" accesskey="C" autocorrect="off" autocapitalize="off" focus-element="$root.screenFocus">
+                </device-screen>
+                <!-- </div> -->
+                <div style="height:34px" role="group" aria-label="...">
+                    <button class="" style='height:100%;width:33%;float:left;padding:0;border:0;background:black' onclick=menu()>
+                        <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true" style='color:#f60'></span>
+                    </button>
+                    <button class="" style='height:100%;width:34%;float:left;padding:0;border:0;background:black' onclick=home()>
+                        <span class="glyphicon glyphicon-home" aria-hidden="true" style='color:#f60'></span>
+                    </button>
+                    <button class="" style='height:100%;width:33%;float:right;padding:0;border:0;background:black' onclick=back()>
+                        <span class="glyphicon glyphicon-menu-left" aria-hidden="true" style='color:#f60'></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#dashboard" aria-controls="dashboard" role="tab" data-toggle="tab">Dashboard</a></li>
+                <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">APK</a></li>
+                <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Infos</a></li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="dashboard" style="position: relative; height: 750px;">
+                    <div class="col-md-4" style="position:absolute;left:0px;top:0px;padding:0px 10px">
+                        <div class="demo-columns chajian">
+                            <div class="mytitle">Status Monitor</div>
+                            <div>
+                                <table class="table" style="margin:5px 0 0 0">
+                                    <tbody>
+                                        <tr>
+                                            <td>Screen status</td>
+                                            <td id='screenStatus'>disconnected</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Service status</td>
+                                            <td id='serviceStatus'>connected</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Touch status</td>
+                                            <td id='touchStatus'>connected</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="position:absolute;left:240px;top:0px;padding:0px 10px">
+                        <div class="demo-columns chajian">
+                            <!-- <div class=""> -->
+                            <div class="btn-toolbar" role="toolbar" aria-label="..." style="margin:15px">
+                                <!-- <div class="btn-group" role="group" aria-label="..."> -->
+                                <!--   <a class="btn btn-default btn" onclick=restart2()>流畅</a> -->
+                                <a class="btn btn-default btn" onclick=getProperties()>唤醒</a>
+                                <!-- </div> -->
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <a class="btn btn-default btn" onclick=power()><span class="glyphicon glyphicon-off" aria-hidden="true"></span></a>
+                                </div>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <a class="btn btn-default btn" onclick=volumeOff()><span class="glyphicon glyphicon-volume-off" aria-hidden="true"></span></a>
+                                    <a class="btn btn-default btn" onclick=volumeDown()><span class="glyphicon glyphicon-volume-down" aria-hidden="true"></span></a>
+                                    <a class="btn btn-default btn" onclick=volumeUp()><span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span></a>
+                                </div>
+                                <div class="btn-group" role="group" aria-label="...">
+                                    <a class="btn btn-default btn" onclick=GetBrowsersRequest()>browsers</a>
+                                    <a class="btn btn-default btn" onclick=lock()>lock</a>
+                                    <a class="btn btn-default btn" onclick=unlock()>unlock</a>
+                                </div>
+                            </div>
+                            <!-- </div> -->
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="messages">
+                    <div class="col-md-6" style="padding:0px 10px">
+                        <div class="demo-columns chajian">
+                            <!-- <div class="chajian"> -->
+                            <div class="mytitle">App Uploader</div>
+                            <div id="drag-and-drop-zone" class="uploader">
+                                <div class="browser">
+                                    <label>
+                                        <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="font-size:200%"></span>
+                                        <br>
+                                        <span>Drop file to upload</span>
+                                        <input type="file" name="files[]" multiple="multiple" title='Click to add Files'>
+                                    </label>
+                                </div>
+                                <div class="panel-body demo-panel-files" id='demo-files'>
+                                </div>
+                            </div>
+                            <!-- </div> -->
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="settings" style="position: relative; height: 750px;">
+                    <div class="col-md-4" style="position:absolute;left:0px;top:0px;padding:0px 10px">
+                        <div class="demo-columns chajian">
+                            <div class="mytitle">Platform</div>
+                            <div>
+                                <table class="table" style="margin:5px 0 0 0">
+                                    <tbody>
+                                        <tr>
+                                            <td>OS</td>
+                                            <td>OS</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Version</td>
+                                            <td>OS</td>
+                                        </tr>
+                                        <tr>
+                                            <td>SDK</td>
+                                            <td>OS</td>
+                                        </tr>
+                                        <tr>
+                                            <td>ABI</td>
+                                            <td>OSdadsadkjajkdhadsadadakjd</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="position:absolute;left:240px;top:0px;padding:0px 10px">
+                        <div class="demo-columns chajian">
+                            <div class="mytitle">Battery</div>
+                            <div>
+                                <table class="table" style="margin:5px 0 0 0">
+                                    <tbody>
+                                        <tr>
+                                            <td>Health</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Power Source</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Level</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Temperature</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="position: absolute;;left:480px;top:0px;padding:0px 10px">
+                        <div class="demo-columns chajian">
+                            <div class="mytitle">Display</div>
+                            <div>
+                                <table class="table" style="margin:5px 0 0 0">
+                                    <tbody>
+                                        <tr>
+                                            <td>resolution</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Orientation</td>
+                                        </tr>
+                                        <tr>
+                                            <td>X DPI</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Y DPI</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="position: absolute;;left:0px;top:205px;padding:0px 10px">
+                        <div class="demo-columns chajian">
+                            <div class="mytitle">Hardware</div>
+                            <div>
+                                <table class="table" style="margin:5px 0 0 0">
+                                    <tbody>
+                                        <tr>
+                                            <td>Manufacturer</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Model</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Serial</td>
+                                        </tr>
+                                        <tr>
+                                            <td>kljkljklj</td>
+                                        </tr>
+                                        <tr>
+                                            <td>kljkljklj</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <a class="btn btn-default btn" onclick=fuck()>close</a>
+        <a class="btn btn-default btn" onclick=restart2()>流畅</a>
+        <a class="btn btn-default btn" onclick=wake()>唤醒</a>
+        <a class="btn btn-default btn" onclick=power()><span class="glyphicon glyphicon-off" aria-hidden="true"></span></a>
+        <a class="btn btn-default btn" onclick=volumeOff()><span class="glyphicon glyphicon-volume-off" aria-hidden="true"></span></a>
+        <a class="btn btn-default btn" onclick=volumeDown()><span class="glyphicon glyphicon-volume-down" aria-hidden="true"></span></a>
+        <a class="btn btn-default btn" onclick=volumeUp()><span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span></a>
+        <div class="row demo-columns">
+            <div class="col-md-6">
+                <div class="chajian">
+                    <div class="mytitle">App Uploader</div>
+                    <div id="drag-and-drop-zone" class="uploader">
+                        <div class="browser">
+                            <label>
+                                <span class="glyphicon glyphicon-download-alt" aria-hidden="true" style="font-size:200%"></span>
+                                <br>
+                                <span>Drop file to upload</span>
+                                <input type="file" name="files[]" multiple="multiple" title='Click to add Files'>
+                            </label>
+                        </div>
+                        <div class="panel-body demo-panel-files" id='demo-files'>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <!-- <span class="finger finger-0" style="transform: translate3d(184px, 230px, 0px) scale(1, 1);"></span> -->
+    </div>
+</div>
+<script type="text/javascript">
+function close() {
+    alert('fuck2')
+}
+</script>
+{% endblock %}

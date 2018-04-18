@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $('#username').focus();
+    })
+</script>
+{% endblock %}
+{% block tittle %}Login{% endblock %}
+{% block page_content%}
+<div class="page_header">
+    <h1>Login</h1>
+</div>
+<div class="col-md-5 focused" style="min-width:90%">
+    {{ wtf.quick_form(form)}}
+</div>
+{% endblock %}

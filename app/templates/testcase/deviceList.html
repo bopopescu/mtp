@@ -1,0 +1,26 @@
+<html>
+<body>
+    {% if results %}
+	<table class="table table-bordered table-hover" style="table-layout:fixed;word-wrap:break-word;word-break;break-all;">
+		<thead>
+			<tr>
+				<th >Serial</th>
+				<th >manufacturer</th>
+				<th>Screen</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for result in results %}
+			<tr onclick=addDeviceView("{{eleid}}","{{result.serial}}")>
+				<td>{{result.serial}}</td>
+				<td>{{result.manufacturer}}</td>
+                <td>{{result.screen}}</td>
+            </tr>
+			{% endfor%}
+		</tbody>
+	{% else %}
+	<h4>Null</h4>
+	{%endif%}
+</table>
+<body>
+</html>

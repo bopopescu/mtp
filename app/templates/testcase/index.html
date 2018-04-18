@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block scripts %}
+<script type="text/javascript" src="/static/socket.io-1.3.7.js"></script>
+<!-- <script type="text/javascript" src="/static/js/my.js"></script> -->
+<script type="text/javascript">
+function use(serial){
+	// alert(window.location.host+'/testcase/jump?serial='+serial)
+	window.location.href="detail?serial="+serial
+	// alert(serial)
+	// alert(window.location.host+'/testcase/jump?serial='+serial)
+}
+function stopUse(serial){
+	socket.emit('closescreen',{'serial':serial})
+}
+function keydownListener(e){
+	console.log(e.keyCode)
+}
+$(document).bind('keydown',keydownListener)
+function getDeviceStatus(){
+	$.getJSON($SCRIPT_ROOT+'getDeviceStatus',function(data){
+		for (var serial in data){
+			if ($('#status'+serial).text()=='Use' && data[serial]==false){
+				$('#'+serial).attr('class','danger')
+				$('#status'+serial).text('ERROR')
+			}
+		}
+	})
+}
+function func1(){
+	$(document).on('ffff',function(){
+		console.log('vv2')
+	})
+}
+func1()
+function func2(){
+	$(document).on('ffff',function(){
+		console.log('vv')
+	})
+}
+func2()
+
+$(document).trigger('ffff')
+
+var socket = io.connect("http://"+window.location.host+'/default',{'forceNew':true });
+socket.on('connect', function() {
+    console.log('connected')
+})
+socket.on('change',function(data){
+	console.log('change')
+	socket.emit('getInfos','hehehe')
+})
+
+socket.on('update', function(data) {
+	console.log('hehe',data)
+	html=''
+	for (var device in data){
+		// device=data[device]
+		console
+		serial=device
+		infos=data[device]
+
+		if (infos['status']=='offline'){
+			// html+="<tr class='active'><th>"+infos['status']+"</th><th>"+serial+"</th></tr>"
+			html+="<tr class='active' id="+serial+"><th id=status"+serial+">"+infos['status']+"</th><th>"+serial+"</th><th> </th><th> </th><th> </th><th> </th><th> </th><th> </th></tr>"
+		}
+		else if (infos['status']=='preparing'){
+			html+="<tr class='active' id="+serial+"><th id=status"+serial+">"+infos['status']+"</th><th>"+serial+"</th><th> </th><th> </th><th> </th><th> </th><th> </th><th> </th></tr>"
+		}
+		else if (infos['status']=='error'){
+			html+="<tr class='danger' id="+serial+"><th id=status"+serial+">"+infos['status']+"</th><th>"+serial+"</th><th> </th><th> </th><th> </th><th> </th><th> </th><th> </th></tr>"
+		}
+		else if (infos['status']=='Stop Using'){
+			html+="<tr class='success' id="+serial+"><th id=status"+serial+"><a onclick=stopUse('"+serial+"')>"+infos['status']+"</a></th><th>"+serial+"</th><th>"+infos['model']+"</th><th>"+infos['version']+"</th><th>"+infos['manufacturer']+"</th><th>"+infos['sdk']+"</th><th>"+infos['size']+"</th><th>"+infos['username']+"</th></tr>"
+		}
+		else if (infos['status']=='busy'){
+			html+="<tr class='warning' id="+serial+"><th id=status"+serial+">"+infos['status']+"</th><th>"+serial+"</th><th>"+infos['model']+"</th><th>"+infos['version']+"</th><th>"+infos['manufacturer']+"</th><th>"+infos['sdk']+"</th><th>"+infos['size']+"</th><th>"+infos['username']+"</th></tr>"
+		}
+		else if (infos['status']=='Use'){
+			html+="<tr class='success' id="+serial+"><th id=status"+serial+"><a onclick=use('"+serial+"')>"+infos['status']+"</a></th><th>"+serial+"</th><th>"+infos['model']+"</th><th>"+infos['version']+"</th><th>"+infos['manufacturer']+"</th><th>"+infos['sdk']+"</th><th>"+infos['size']+"</th><th>"+infos['username']+"</th></tr>"
+			// html+="<a class='btn btn-success' onclick=fff('"+device[0]+"')>"+device[0]+"</a>"
+		}
+	}
+	l=$('#bbb')
+	l.html(html)
+	getDeviceStatus()
+})
+
+inter=setInterval(getDeviceStatus,10*1000)
+
+
+
+</script>
+{% endblock %}
+{% block page_content %}
+<div>
+<h1>设备列表</h1>
+<hr>
+<a class="btn btn-default btn" onclick=lost()>lost</a>
+<a class="btn btn-default btn" onclick=recon()>recon</a>
+<div id="hehehe">
+<table class="table">
+	<thead>
+		<tr>
+			<th style="width:10%">Status</th>
+			<th style="width:15%">Serial</th>
+			<th>Model</th>
+			<th>OS</th>
+			<th>manufacturer</th>
+			<th>sdk</th>
+			<th>Screen</th>
+			<th>CurrentUser</th>
+			<!-- <th>Status</th> -->
+		</tr>
+		<tbody id='bbb'>
+			
+		</tbody>
+	</thead>
+
+</table>
+</div>
+</div>
+{% endblock %}

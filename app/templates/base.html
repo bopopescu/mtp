@@ -1,0 +1,66 @@
+{% extends "bootstrap/base.html" %}
+{% block tittle %}Monitor{% endblock %}
+{% block head %}
+{{ super()}}
+<script type="text/javascript"> $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
+<script type="text/javascript" src="/static/jquery-2.1.4.min.js"></script>
+<script type="text/javascript" src="/static/bootstrap-3.3.5-dist/js/bootstrap.min.js"></script>
+<script type="text/javascript"></script>
+{% block styles %}
+<link type="text/css" href="/static/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+{% endblock %}
+{% endblock %}
+
+{% set active_page=active_page|default('index-nav') %}
+{% block navbar%}
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background:#030303;opacity:0.8">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">MTP</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li>                
+                <a href='/'>Dashboard</a>
+                </li>
+                <li>                
+                <a href="{{url_for('testcase.index')}}">Devices</a>
+                </li>
+
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_authenticated() %}
+                <li class="dropdown">
+                <a id="profile" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">Hi, {{current_user.displayname}} <span class="glyphicon glyphicon-user" aria-hidden=true></span></a>
+                    <ul class="dropdown-menu" aria-labelledby="profile" width="20%">
+                        <li class="disabled"><a href="#">Edit</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{{url_for('auth.logout')}}">Logout</a>
+                    </ul>
+                </li>
+                {% else %}
+                <li><a href="{{url_for('auth.login')}}">Log In</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div id="messagediv" class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{message}}
+    </div>
+    {% endfor %}
+    {%block page_content%}{% endblock %}
+</div>
+{% endblock %}
